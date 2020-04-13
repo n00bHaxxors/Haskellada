@@ -1,0 +1,7 @@
+Tauler, conté les caselles del tauler
+Casella, pot ser buida, plena, final, (interruptor , pont)
+Posicio, posicio del tauler
+Moviment, amunt avall esquerra dreta
+Bloc, bloc que anem movent, conté posicio del bloc top left i el seu tamany, el tamany va mutant segons anem rotant
+Partida, conté un tauler i un bloc, potser també l estat de la partida (jugant, guanyat)
+Solucionador? contindria una llista i un arbre de partides, aniria fent BFS fins trobar solucio?
