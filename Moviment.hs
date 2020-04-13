@@ -1,5 +1,3 @@
-module Moviment (
- 
-) where
+module Moviment where
 
-data Moviment = Amunt | Avall | Dreta | Esquerra deriving (Eq)
+data Moviment =  U | D | L | R deriving (Eq, Show)

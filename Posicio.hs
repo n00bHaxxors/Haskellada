@@ -1,7 +1,4 @@
-module Posicio (
- Posicio,
- sumar
-) where
+module Posicio where
 
 import Data.Tuple
 
