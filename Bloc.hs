@@ -1,23 +1,24 @@
 module Bloc (
   Bloc,
-  aplicarMoviment,
-  PposicionsOcupades
+  --mou,
+  posBloc
 ) where
 
-import Posicio as Pos
+import Posicio
 import Moviment
 
 data Bloc = Bloc { x :: Int,
     y :: Int,
     z :: Int,
-    pos :: Pos
+    Pos :: Posicio
     } deriving (Eq)
 
 -- ha de fer efectiu un moviment (si es legal) i portar-nos a l'estat que en resulti.
-mou :: Bloc -> Moviment -> Bloc
-mou =
+--mou :: Bloc -> Moviment -> Bloc
+--mou =
 
 
 -- ens ha de donar les posicions que ocupa el bloc.
 posBloc :: Bloc -> Pos
-posBloc = (Pos.posX , Pos.posY)
+posBloc Bloc = (Pos.posX , Pos.posY)
+
