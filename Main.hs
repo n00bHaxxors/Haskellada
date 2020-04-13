@@ -4,14 +4,7 @@ import System.IO
 import System.Directory
 import Data.Char
 import Data.List
-
--- ens ha de crear un tauler i bloc a l'estat inicial.
---sortida ::
---sortida = 
-
--- ens ha de dir si el bloc ja ha arribat a la meta o no.
---resolt :: Bool
---resolt = True
+import Tauler
 
 main :: IO ()
 main = do

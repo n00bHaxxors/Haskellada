@@ -1,15 +1,11 @@
 module Posicio (
- posX,
- posY,
- sumarX,
- sumarY
+ Posicio,
+ sumar
 ) where
 
--- (x,y) del tauler
-data Posicio = P Int Int deriving (Eq, Ord, Show, Read)
+data Posicio = Posicio {
+    x :: Int,
+    y :: Int
+} deriving (Eq, Ord, Show, Read)
 
-posX :: Posicio -> Int
-posX (P x _) = x
-
-posY :: Posicio -> Int
-posY (P _ y) = y
+sumar :: Posicio -> (Int, Int) -> Posicio
