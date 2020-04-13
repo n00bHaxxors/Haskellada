@@ -1,6 +1,9 @@
 module Partida (
  Partida,
  esLegal,
+ legals,
+ resolt,
+ sortida
 )
 
 import Bloc
@@ -16,3 +19,5 @@ esLegal :: Partida -> Moviment -> Bool
 legals :: Partida -> [Moviments]
 
 resolt :: Partida -> Bool
+
+sortida :: Partida
