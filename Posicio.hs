@@ -7,6 +7,7 @@ data Posicio = Posicio {
     y :: Int
 } deriving (Eq, Ord, Show, Read)
 
+--donada una posició i una tupla de dos enters, retorna la posicio resultant d'aplicar la tupla com a desplaçament a la posició
 sumar :: Posicio -> (Int, Int) -> Posicio
 sumar p s = result
     where

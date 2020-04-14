@@ -11,15 +11,10 @@ data Bloc = Bloc { dimx :: Int,
     pos :: Posicio
     } deriving (Eq, Show)
 
---  xxxxxxxxx
---  xxPOOxxxx
---  xxOOOxxxx
---  xxxxxxxxx
---  xxxxxxxxx
+mostrarBloc :: Bloc -> IO()
+mostrarBloc b = putStrLn "bloc"
 
-
-
--- ha de fer efectiu un moviment (si es legal) i portar-nos a l'estat que en resulti.
+-- efectua un moviment sobre un bloc.
 moure :: Bloc -> Moviment -> Bloc
 moure b U =
   do
@@ -38,7 +33,7 @@ moure b L =
     let newpos = sumar (pos b) (-(dimz b),0)
     Bloc {dimx = dimz b, dimy = dimy b, dimz = dimx b, pos = newpos}
 
--- ens ha de donar les posicions que ocupa el bloc.
+-- ens dona les posicions que ocupa el bloc del tauler.
 posBloc :: Bloc -> [Posicio]
 posBloc b =
   do
