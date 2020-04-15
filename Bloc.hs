@@ -9,7 +9,7 @@ data Bloc = Bloc { dimx :: Int,
     dimy :: Int,
     dimz :: Int,
     pos :: Posicio
-    } deriving (Eq, Show)
+    } deriving (Eq, Show,Ord)
 
 mostrarBloc :: Bloc -> IO()
 mostrarBloc b = putStrLn "bloc"
@@ -32,6 +32,7 @@ moure b L =
   do
     let newpos = sumar (pos b) (-(dimz b),0)
     Bloc {dimx = dimz b, dimy = dimy b, dimz = dimx b, pos = newpos}
+moure b N = b
 
 -- ens dona les posicions que ocupa el bloc del tauler.
 posBloc :: Bloc -> [Posicio]

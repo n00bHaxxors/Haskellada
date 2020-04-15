@@ -8,13 +8,13 @@ import Posicio
 data Partida = Partida {
  bloc :: Bloc,
  tauler :: Tauler
-} deriving (Eq,Show)
+} deriving (Eq,Show,Ord)
 
 mostrarPartida :: Partida -> IO()
 mostrarPartida p = 
         do
-            mostrarBloc (bloc p)
-            mostrarTauler (tauler p)
+            let taulerAmbBloc = substituir (tauler p) (map (\x -> (x,'B')) (posBloc (bloc p)))
+            mostrarTauler taulerAmbBloc
 
 --retorna si un moment és legal amb l'estat actual.
 esLegal :: Partida -> Moviment -> Bool

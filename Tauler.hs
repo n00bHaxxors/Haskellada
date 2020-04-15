@@ -11,32 +11,31 @@ import Data.List
 data Tauler = Tauler {
     tau :: [(Posicio, Char)],
     tamany :: (Int,Int)
-} deriving (Eq,Show)
+} deriving (Eq,Show,Ord)
+
+substituir :: Tauler -> [(Posicio, Char)] -> Tauler
+substituir taulerOG newPos = result
+    where
+        result = Tauler tauFinal (tamany taulerOG)
+        tauFinal = map (corregir newPos) (tau taulerOG)
+        corregir :: [(Posicio, Char)] -> (Posicio, Char) -> (Posicio, Char)
+        corregir posicionsNoves pos = result
+            where
+                result = if isJust trobat then fromJust trobat else pos
+                trobat = find (\x -> fst x == fst pos) posicionsNoves
+
+
+obtenirStringFila :: Tauler -> Int -> String
+obtenirStringFila t y = result
+    where
+        result = map (casella t) posicions
+        posicions = [(Posicio x y) | x <- [0 .. (fst (tamany t) - 1)]]
 
 mostrarTauler :: Tauler -> IO()
-mostrarTauler t = putStrLn "tauler"
-
-
---instance Show Tauler where
---    show t = show (obtenirSortida t)
---      where
---            obtenirSortida :: Tauler -> [String]
---            obtenirSortida t = result
---               where
---                    result = (map(\fila -> obtenirStringFila t fila) [0 .. snd (tamany t) - 1])
---                    llistaX = [0 .. fst (tamany t) - 1]
---
---           obtenirStringFila :: Tauler -> Int -> String
---          obtenirStringFila t y = "LMAU"
-    
-    --result = show ["asdf","asdf"] --llistaStrings
-    --show t = result
-    --    where
-    --        llistaX = [0 .. fst (tamany t) - 1]
-    --        llistaStrings = ["asdf","asdf"]
-    --        llistaStrings = concat (map(\fila -> obtenirStringFila t fila) [0 .. snd (tamany t) - 1])
-            
-            --concat (map crearPosicions [(nfila,entrada !! nfila) | nfila <- llistaY])
+mostrarTauler t = do
+    let llistaStrings = map (obtenirStringFila t) [0 .. (snd (tamany t) - 1)];
+    mapM (putStrLn) llistaStrings;
+    putStrLn ""
 
 --ens dona el caràcter d'una posicio d'un tauler, en cas de posició invalida retorna casella buida
 casella :: Tauler -> Posicio -> Char
