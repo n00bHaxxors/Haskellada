@@ -4,11 +4,14 @@ import System.IO
 import System.Directory
 import Data.Char
 import Data.List
+import qualified Data.Sequence as Sequence
+import qualified Data.Map.Strict as Map
 import Tauler
 import Partida
 import Posicio
 import Moviment
 import Bloc
+import Data.Maybe
 import Debug.Trace
 
 
@@ -63,8 +66,48 @@ jocInteractiu p
       mostrarPartida novaPartida
       jocInteractiu novaPartida
 
+trobarCami :: Partida -> Map.Map Partida Partida -> [Partida] -> [Partida]
+trobarCami partidaActual antecesors cami = do
+    let antecesorDelActual = fromJust (Map.lookup partidaActual antecesors)
+    let nouTram | antecesorDelActual == partidaActual = [partidaActual]
+                | otherwise = (trobarCami antecesorDelActual antecesors []) ++ [partidaActual]
+    let result = nouTram ++ cami
+    result
+
+
+mostrarCami :: Partida -> Map.Map Partida Partida -> IO()
+mostrarCami p antecesors = mapM_ mostrarPartida (trobarCami p antecesors [])
+
+iSolver :: Partida -> Map.Map Partida Partida -> Sequence.Seq (Partida,Moviment)-> IO()
+iSolver pActual antecesors pendents = do
+  let possiblesMoviments = legals pActual
+  let movimentsFiltrats = filter (\x -> Map.notMember (mou pActual x) antecesors) possiblesMoviments
+  let nousPendents = pendents Sequence.>< Sequence.fromList [(pActual,m) | m <- movimentsFiltrats]
+
+  let resultat | resolt pActual = mostrarCami pActual antecesors
+               | Sequence.null nousPendents = putStrLn "No s'ha trobat solució"
+               | otherwise = do
+                  let mov = Sequence.index nousPendents 0
+                  let novaPartida = mou (fst mov) (snd mov)
+                  let nousAntecesors = Map.insert novaPartida (fst mov) antecesors
+                  --mostrarPartida novaPartida
+                  iSolver novaPartida nousAntecesors (Sequence.drop 1 nousPendents)
+  resultat
+
+  --buscar possibles moviments del bloc
+  --afegir nous possibles estats (nous) a la sequencia
+  --afegir pActual com a antecessor dels nous possibles estats
+  --novaPartida = pendents !! 0
+  --nousPendents = tail pendents
+
+  --si resolt pActual acabem
+  --si no hi ha nous estats possibles i pendents es buit, F
+
 solver :: Partida -> IO()
-solver p = putStrLn "solvada"
+solver p = do
+  let antecessors = Map.insert p p Map.empty
+  iSolver p antecessors Sequence.empty
+
 
 main :: IO ()
 main = do
@@ -78,9 +121,9 @@ main = do
   let partida = sortida list
   putStrLn "Vols que sigui interactiu el joc? S/N"
   interactiu <- getLine
-  mostrarPartida partida
   if interactiu == "S"
   then do
+   mostrarPartida partida
    jocInteractiu partida
   else
    solver partida
