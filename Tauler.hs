@@ -55,4 +55,11 @@ casellaFi t p = casella t p == 'G'
 --           1 (terra)
 --           S (sortida, aqui no ho tindrem)
 --           G (goal)
---           B (bloc, aqui tmpoc ho tindrem)
+--           B (bloc, aqui tmpoc ho tindrem)ç
+
+crearTauler :: (Int, Int)-> [String] -> Tauler
+crearTauler (x,y) entrada = result
+  where
+    result = Tauler llistaPosicions (x,y)
+    llistaY = [0 .. y - 1]
+    llistaPosicions = concat (map crearPosicions [(nfila,entrada !! nfila) | nfila <- llistaY])
