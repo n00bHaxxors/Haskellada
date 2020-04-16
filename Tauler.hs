@@ -51,15 +51,22 @@ casellaBuida t p = casella t p == '0'
 casellaFi :: Tauler -> Posicio -> Bool
 casellaFi t p = casella t p == 'G'
 
--- caselles: 0 (buida)
---           1 (terra)
---           S (sortida, aqui no ho tindrem)
---           G (goal)
---           B (bloc, aqui tmpoc ho tindrem)ç
-
-crearTauler :: (Int, Int)-> [String] -> Tauler
+--donades unes dimensions X i Y i unes strings del tauler, retorna el tauler descrit
+crearTauler :: (Int, Int) -> [String] -> Tauler
 crearTauler (x,y) entrada = result
   where
     result = Tauler llistaPosicions (x,y)
     llistaY = [0 .. y - 1]
     llistaPosicions = concat (map crearPosicions [(nfila,entrada !! nfila) | nfila <- llistaY])
+
+--Crea el vector de posicions segons la string d entrada
+crearPosicions :: (Int,String) -> [(Posicio,Char)]
+crearPosicions (y,entrada) = result
+  where
+    result = map (\x -> (Posicio x y, if entrada !! x == 'S' then '1' else entrada !! x)) [0 .. (length entrada) - 1]
+
+-- caselles: 0 (buida)
+--           1 (terra)
+--           S (sortida, aqui no ho tindrem)
+--           G (goal)
+--           B (bloc, aqui tmpoc ho tindrem)

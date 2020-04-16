@@ -14,6 +14,7 @@ data Partida = Partida {
  tauler :: Tauler
 } deriving (Eq,Show,Ord)
 
+--Donat una partida mostra el tauler i el bloc
 mostrarPartida :: Partida -> IO()
 mostrarPartida p = 
         do
@@ -38,7 +39,7 @@ mou p m
     | esLegal p m = Partida (moure (bloc p) m) (tauler p)
     | otherwise = p
 
-    
+--Donat un mapa de predecessors i una partida objectiu, retorna un vector ordenat amb el camí realitzat per arribar al destí objectiu
 trobarCami :: Partida -> Map.Map Partida (Partida,Moviment) -> [(Partida,Moviment)] -> [(Partida,Moviment)]
 trobarCami partidaActual antecesors cami = do
     let antecesorDelActual = fromJust (Map.lookup partidaActual antecesors)
@@ -47,6 +48,7 @@ trobarCami partidaActual antecesors cami = do
     let result = nouTram ++ cami
     result
 
+--Mostra una jugada, amb index de jugada, estat de la partida i moviment realitzat
 mostrarPartidaMoviment :: (Int,(Partida,Moviment)) -> IO()
 mostrarPartidaMoviment idx_jugada = do
     let jugada = snd idx_jugada
@@ -54,15 +56,15 @@ mostrarPartidaMoviment idx_jugada = do
     mostrarMoviment (snd jugada)
     mostrarPartida (fst jugada)
 
-
+--Donat una partida i un mapa de predecesors, si existeix un camí, el mostra pas per pas i els passos totals
 mostrarCami :: Partida -> Map.Map Partida (Partida,Moviment) -> IO()
 mostrarCami p antecesors = do
         let cami = (trobarCami p antecesors [])
         let camiAmbIndexs = zip [0 .. length cami -1] cami
         mapM_ mostrarPartidaMoviment camiAmbIndexs
-        putStrLn ("Si, en " ++ show(length camiAmbIndexs) ++ " passos!!!")
+        putStrLn ("Si, en " ++ show(length camiAmbIndexs -1) ++ " passos!!!")
 
---Donat el contingut d un fitxer d entrada, ens retorna una partida a punt de començar
+--Donat el contingut d'un fitxer d'entrada, ens retorna una partida a punt de començar
 sortida :: [String] -> Partida
 sortida entrada = result
   where
@@ -72,3 +74,13 @@ sortida entrada = result
     taulerStrings = drop 3 entrada
     tauler = crearTauler (x,y) taulerStrings
     bloc = crearBloc (read (entrada !! 0) :: Int)  taulerStrings
+
+--Donat el contingut d'un fitxer d'entrada, retorna un llistat de partides
+sortides :: [String] -> [Partida]
+sortides entrada = result
+    where
+        y = read (entrada !! 1) :: Int
+        primeraPartida = take (y + 3) entrada
+        partidesRestants = drop (y+3) entrada
+        result | length partidesRestants > 0 = [(sortida primeraPartida)] ++ sortides partidesRestants
+               | otherwise = [(sortida primeraPartida)]

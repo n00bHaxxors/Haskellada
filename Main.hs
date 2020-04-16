@@ -14,10 +14,15 @@ import Bloc
 import Data.Maybe
 import Debug.Trace
 
-jocInteractiu :: Partida -> IO()
-jocInteractiu p
-  | resolt p = putStrLn "Partida resolta"
+--Donada una partida i un índex de partida, interactua amb l'usuari i va avançant el joc, mostrant els passos seguits
+jocInteractiu :: (Partida,Int) -> IO()
+jocInteractiu (p,i)
+  | resolt p = do
+      mostrarPartida p
+      putStrLn "Partida resolta"
   | otherwise = do
+      putStrLn (if i /= 0 then"\nPartida número " ++ show(i) ++"\n"else "")  
+      mostrarPartida p
       putStrLn "Introdueix una direcció [U,D,L,R]"
       entrada <- getLine
       let mov | entrada == "D" = D
@@ -26,10 +31,9 @@ jocInteractiu p
               | entrada == "L" = L
               | otherwise = N
       let novaPartida = mou p mov
-      mostrarPartida novaPartida
-      jocInteractiu novaPartida
+      jocInteractiu (novaPartida,0)
 
-
+--funcio d'immersió, donada una partida objectiu, un mapa de predecessors i una cua de nodes pendents, mostra el camí per arribar a la partida objectiu
 iSolver :: Partida -> Map.Map Partida (Partida,Moviment) -> Sequence.Seq (Partida,Moviment)-> IO()
 iSolver pActual antecesors pendents = do
   let possiblesMoviments = legals pActual
@@ -45,6 +49,7 @@ iSolver pActual antecesors pendents = do
                   iSolver novaPartida nousAntecesors (Sequence.drop 1 nousPendents)
   resultat
 
+--Donada una partida mostra la seva solució
 solver :: Partida -> IO()
 solver p = do
   let antecessors = Map.insert p (p,N) Map.empty
@@ -53,21 +58,20 @@ solver p = do
 
 main :: IO ()
 main = do
- putStrLn "Quin es el nom del fitxer?"
+ putStrLn "Quin es el nom del fitxer? (sense extensió)"
  nom <- getLine
  exists <- doesFileExist ("./" ++ nom ++ ".txt")
  if exists
  then do
   contents <- readFile (nom ++ ".txt")
   let list = lines contents
-  let partida = sortida list
+  let partides = sortides list
   putStrLn "Vols que sigui interactiu el joc? S/N"
   interactiu <- getLine
   if interactiu == "S"
-  then do
-   mostrarPartida partida
-   jocInteractiu partida
+  then
+    mapM_ (jocInteractiu) (zip partides [1 .. length partides])
   else
-   solver partida
+   solver (partides !! 0)
  else
   putStrLn "El fitxer no existeix"

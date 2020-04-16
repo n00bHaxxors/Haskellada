@@ -12,9 +12,6 @@ data Bloc = Bloc { dimx :: Int,
     pos :: Posicio
     } deriving (Eq, Show,Ord)
 
-mostrarBloc :: Bloc -> IO()
-mostrarBloc b = putStrLn "bloc"
-
 -- efectua un moviment sobre un bloc.
 moure :: Bloc -> Moviment -> Bloc
 moure b U =
@@ -42,10 +39,11 @@ posBloc b =
     let posicions = [(x,y) | x <- [0 .. (dimx b - 1)], y <- [0 .. (dimy b - 1)]]
     map (sumar (pos b)) posicions
 
+--Donat un tauler en forma de strings, retorna el tamany x del bloc en el tauler
 buscarTamany :: [String] -> Int
 buscarTamany tauler = maximum (map (\x -> foldl(\x y -> x + if y =='S' then 1 else 0) 0 x) tauler)
 
---Funcions per crear dades a partir de l entrada
+--Donada una alçada i un tauler en forma de strings, retorna el bloc descrit en el tauler
 crearBloc :: Int -> [String] -> Bloc
 crearBloc z tauler = result
   where
@@ -54,5 +52,3 @@ crearBloc z tauler = result
     y = buscarTamany (transpose tauler)
     posx = fromJust (elemIndex True (map (\x -> if (find (=='S') x) == Nothing then False else True) (transpose tauler)))
     posy = fromJust (elemIndex True (map (\x -> if (find (=='S') x) == Nothing then False else True) tauler))
-    -- TODO
-
