@@ -14,16 +14,20 @@ import Bloc
 import Data.Maybe
 import Debug.Trace
 
-
+buscarTamany :: [String] -> Int
+buscarTamany tauler = maximum (map (\x -> foldl(\x y -> x + if y =='S' then 1 else 0) 0 x) tauler)
 
 --Funcions per crear dades a partir de l entrada
 crearBloc :: Int -> [String] -> Bloc
 crearBloc z tauler = result
   where
-    result = Bloc x y z (Posicio 1 1)
-    x = 1
-    y = 1
+    result = Bloc x y z (Posicio posx posy)
+    x = buscarTamany tauler
+    y = buscarTamany (transpose tauler)
+    posx = fromJust (elemIndex True (map (\x -> if (find (=='S') x) == Nothing then False else True) (transpose tauler)))
+    posy = fromJust (elemIndex True (map (\x -> if (find (=='S') x) == Nothing then False else True) tauler))
     -- TODO
+
 
 crearPosicions :: (Int,String) -> [(Posicio,Char)]
 crearPosicions (y,entrada) = result
