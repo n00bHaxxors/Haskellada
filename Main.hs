@@ -23,7 +23,7 @@ jocInteractiu (p,i)
   | otherwise = do
       putStrLn (if i /= 0 then"\nPartida número " ++ show(i) ++"\n"else "")  
       mostrarPartida p
-      putStrLn "Introdueix una direcció \\e[31m[U,D,L,R]"
+      putStrLn "Introdueix una direcció [U,D,L,R]"
       entrada <- getLine
       let mov | entrada == "D" = D
               | entrada == "U" = U
@@ -44,7 +44,7 @@ iSolver pActual antecesors pendents = do
                | Sequence.null nousPendents = putStrLn "No hi ha solució !!!"
                | otherwise = do
                   let mov = Sequence.index nousPendents 0
-                  let novaPartida = mou (fst mov) (snd mov)
+                  let novaPartida = uncurry mou mov
                   let nousAntecesors = Map.insert novaPartida mov antecesors
                   iSolver novaPartida nousAntecesors (Sequence.drop 1 nousPendents)
   resultat
@@ -70,8 +70,8 @@ main = do
   interactiu <- getLine
   if interactiu == "S"
   then
-    mapM_ (jocInteractiu) (zip partides [1 .. length partides])
+    mapM_ jocInteractiu (zip partides [1 .. length partides])
   else
-   solver (partides !! 0)
+   solver (head partides)
  else
   putStrLn "El fitxer no existeix"

@@ -44,7 +44,7 @@ trobarCami :: Partida -> Map.Map Partida (Partida,Moviment) -> [(Partida,Movimen
 trobarCami partidaActual antecesors cami = do
     let antecesorDelActual = fromJust (Map.lookup partidaActual antecesors)
     let nouTram | fst antecesorDelActual == partidaActual = [(partidaActual,N)]
-                | otherwise = (trobarCami (fst antecesorDelActual) antecesors []) ++ [(partidaActual,snd antecesorDelActual)]
+                | otherwise = trobarCami (fst antecesorDelActual) antecesors [] ++ [(partidaActual,snd antecesorDelActual)]
     let result = nouTram ++ cami
     result
 
@@ -59,7 +59,7 @@ mostrarPartidaMoviment idx_jugada = do
 --Donat una partida i un mapa de predecesors, si existeix un camí, el m pas per pas i els passos totals
 mostrarCami :: Partida -> Map.Map Partida (Partida,Moviment) -> IO()
 mostrarCami p antecesors = do
-        let cami = (trobarCami p antecesors [])
+        let cami = trobarCami p antecesors []
         let camiAmbIndexs = zip [0 .. length cami -1] cami
         mapM_ mostrarPartidaMoviment camiAmbIndexs
         putStrLn ("Si, en " ++ show(length camiAmbIndexs -1) ++ " passos!!!")
@@ -73,7 +73,7 @@ sortida entrada = result
     y = read (entrada !! 1) :: Int
     taulerStrings = drop 3 entrada
     tauler = crearTauler (x,y) taulerStrings
-    bloc = crearBloc (read (entrada !! 0) :: Int)  taulerStrings
+    bloc = crearBloc (read (head entrada) :: Int)  taulerStrings
 
 --Donat el contingut d'un fitxer d'entrada, retorna un llistat de partides
 sortides :: [String] -> [Partida]
@@ -82,5 +82,5 @@ sortides entrada = result
         y = read (entrada !! 1) :: Int
         primeraPartida = take (y + 3) entrada
         partidesRestants = drop (y+3) entrada
-        result | length partidesRestants > 0 = [(sortida primeraPartida)] ++ sortides partidesRestants
-               | otherwise = [(sortida primeraPartida)]
+        result | not (null partidesRestants) = sortida primeraPartida : sortides partidesRestants
+               | otherwise = [sortida primeraPartida]

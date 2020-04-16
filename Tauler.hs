@@ -13,15 +13,17 @@ data Tauler = Tauler {
     tamany :: (Int,Int)
 } deriving (Eq,Show,Ord)
 
+--Canvia les posicions coincidents del tauler amb les de la nova llista de posicions
 substituir :: Tauler -> [(Posicio, Char)] -> Tauler
 substituir taulerOG newPos = result
     where
         result = Tauler tauFinal (tamany taulerOG)
         tauFinal = map (corregir newPos) (tau taulerOG)
+        --Donada una llista de pos,char i una nova pos,char substitueix la pos,char de la llista en la mateixa posicio
         corregir :: [(Posicio, Char)] -> (Posicio, Char) -> (Posicio, Char)
         corregir posicionsNoves pos = result
             where
-                result = if isJust trobat then fromJust trobat else pos
+                result = fromMaybe pos trobat
                 trobat = find (\x -> fst x == fst pos) posicionsNoves
 
 --Retorna un tauler amb les caselles fantasma del caracter especificat activades
@@ -29,14 +31,14 @@ activarInterruptorsLletra :: Tauler -> Char -> Tauler
 activarInterruptorsLletra tauler c = do
     let caracter = toLower c
     let posicions = findIndices (\x -> snd x == caracter) (tau tauler)
-    Tauler (foldl (\t p -> (take p t) ++ [(fst(t !! p),'1')] ++ (drop (p+1) t)) (tau tauler) posicions) (tamany tauler)
+    substituir tauler (map (\x -> (fst (tau tauler !! x),'1')) posicions)
 
 --Donades unes posicions trepitjades, activa les caselles dels interruptors trepitjats, si escau
 activarInterruptors :: Tauler -> [Posicio] -> Tauler
 activarInterruptors tauler posicions = do
     let caselles = map (casella tauler) posicions
     let caracters = filter (\x -> isUpper x && x /= 'G' && x /= 'S') caselles
-    foldl (\x y -> activarInterruptorsLletra x y) tauler caracters
+    foldl activarInterruptorsLletra tauler caracters
 
 
 --retorna una fila específica del tauler en forma de string
@@ -44,20 +46,20 @@ obtenirStringFila :: Tauler -> Int -> String
 obtenirStringFila t y = result
     where
         result = map (casella t) posicions
-        posicions = [(Posicio x y) | x <- [0 .. (fst (tamany t) - 1)]]
+        posicions = [Posicio x y | x <- [0 .. (fst (tamany t) - 1)]]
 
 
 --mostra el tauler per pantalla
 mostrarTauler :: Tauler -> IO()
 mostrarTauler t = do
     let llistaStrings = map (obtenirStringFila t) [0 .. (snd (tamany t) - 1)];
-    mapM (putStrLn) llistaStrings;
+    mapM_ putStrLn llistaStrings;
     putStrLn ""
 
 --ens dona el caràcter d'una posicio d'un tauler, en cas de posició invalida retorna casella buida
 casella :: Tauler -> Posicio -> Char
 casella t p
-    | isJust((find (\x -> p == fst x) (tau t))) = snd(fromJust((find (\x -> p == fst x) (tau t))))
+    | isJust(find (\x -> p == fst x) (tau t)) = snd (fromJust (find (\x -> p == fst x) (tau t)))
     | otherwise = '0'
 
 --ens diu si la posicio que preguntem és buida.
@@ -74,13 +76,13 @@ crearTauler (x,y) entrada = result
   where
     result = Tauler llistaPosicions (x,y)
     llistaY = [0 .. y - 1]
-    llistaPosicions = concat (map crearPosicions [(nfila,entrada !! nfila) | nfila <- llistaY])
+    llistaPosicions = concatMap crearPosicions ([(nfila, entrada !! nfila) | nfila <- llistaY])
 
 --Crea el vector de posicions segons la string d entrada
 crearPosicions :: (Int,String) -> [(Posicio,Char)]
 crearPosicions (y,entrada) = result
   where
-    result = map (\x -> (Posicio x y, if entrada !! x == 'S' then '1' else entrada !! x)) [0 .. (length entrada) - 1]
+    result = map (\x -> (Posicio x y, if entrada !! x == 'S' then '1' else entrada !! x)) [0 .. length entrada - 1]
 
 -- caselles: 0 (buida)
 --           1 (terra)

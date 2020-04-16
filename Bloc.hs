@@ -41,7 +41,7 @@ posBloc b =
 
 --Donat un tauler en forma de strings, retorna el tamany x del bloc en el tauler
 buscarTamany :: [String] -> Int
-buscarTamany tauler = maximum (map (\x -> foldl(\x y -> x + if y =='S' then 1 else 0) 0 x) tauler)
+buscarTamany tauler = maximum (map (foldl (\ x y -> x + if y == 'S' then 1 else 0) 0) tauler)
 
 --Donada una alçada i un tauler en forma de strings, retorna el bloc descrit en el tauler
 crearBloc :: Int -> [String] -> Bloc
@@ -50,5 +50,5 @@ crearBloc z tauler = result
     result = Bloc x y z (Posicio posx posy)
     x = buscarTamany tauler
     y = buscarTamany (transpose tauler)
-    posx = fromJust (elemIndex True (map (\x -> if (find (=='S') x) == Nothing then False else True) (transpose tauler)))
-    posy = fromJust (elemIndex True (map (\x -> if (find (=='S') x) == Nothing then False else True) tauler))
+    posx = fromJust (elemIndex True (map (isJust . find (== 'S')) (transpose tauler)))
+    posy = fromJust (elemIndex True (map (isJust . find (== 'S')) tauler))
