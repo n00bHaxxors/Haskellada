@@ -7,6 +7,7 @@ import Posicio
 import qualified Data.Sequence as Sequence
 import qualified Data.Map.Strict as Map
 import Data.Maybe
+import Data.Maybe
 
 data Partida = Partida {
  bloc :: Bloc,
@@ -46,13 +47,20 @@ trobarCami partidaActual antecesors cami = do
     let result = nouTram ++ cami
     result
 
-mostrarPartidaMoviment :: (Partida,Moviment) -> IO()
-mostrarPartidaMoviment jugada = do
-    mostrarMoviment (snd jugada);
+mostrarPartidaMoviment :: (Int,(Partida,Moviment)) -> IO()
+mostrarPartidaMoviment idx_jugada = do
+    let jugada = snd idx_jugada
+    putStr (if fst idx_jugada == 0 then "" else show(fst idx_jugada) ++ " ")
+    mostrarMoviment (snd jugada)
     mostrarPartida (fst jugada)
 
+
 mostrarCami :: Partida -> Map.Map Partida (Partida,Moviment) -> IO()
-mostrarCami p antecesors = mapM_ mostrarPartidaMoviment (trobarCami p antecesors [])
+mostrarCami p antecesors = do
+        let cami = (trobarCami p antecesors [])
+        let camiAmbIndexs = zip [0 .. length cami -1] cami
+        mapM_ mostrarPartidaMoviment camiAmbIndexs
+        putStrLn ("Si, en " ++ show(length camiAmbIndexs) ++ " passos!!!")
 
 --Donat el contingut d un fitxer d entrada, ens retorna una partida a punt de començar
 sortida :: [String] -> Partida

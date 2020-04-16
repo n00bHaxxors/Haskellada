@@ -37,7 +37,7 @@ iSolver pActual antecesors pendents = do
   let nousPendents = pendents Sequence.>< Sequence.fromList [(pActual,m) | m <- movimentsFiltrats]
 
   let resultat | resolt pActual = mostrarCami pActual antecesors
-               | Sequence.null nousPendents = putStrLn "No s'ha trobat solució"
+               | Sequence.null nousPendents = putStrLn "No hi ha solució !!!"
                | otherwise = do
                   let mov = Sequence.index nousPendents 0
                   let novaPartida = mou (fst mov) (snd mov)
