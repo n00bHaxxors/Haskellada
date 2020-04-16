@@ -36,7 +36,7 @@ resolt p = all (casellaFi (tauler p)) (posBloc (bloc p))
 --efectua un moviment si aquest és legal
 mou :: Partida -> Moviment -> Partida
 mou p m
-    | esLegal p m = Partida (moure (bloc p) m) (tauler p)
+    | esLegal p m = Partida (moure (bloc p) m) (activarInterruptors (tauler p) (posBloc (moure (bloc p) m)))
     | otherwise = p
 
 --Donat un mapa de predecessors i una partida objectiu, retorna un vector ordenat amb el camí realitzat per arribar al destí objectiu
@@ -56,7 +56,7 @@ mostrarPartidaMoviment idx_jugada = do
     mostrarMoviment (snd jugada)
     mostrarPartida (fst jugada)
 
---Donat una partida i un mapa de predecesors, si existeix un camí, el mostra pas per pas i els passos totals
+--Donat una partida i un mapa de predecesors, si existeix un camí, el m pas per pas i els passos totals
 mostrarCami :: Partida -> Map.Map Partida (Partida,Moviment) -> IO()
 mostrarCami p antecesors = do
         let cami = (trobarCami p antecesors [])

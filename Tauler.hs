@@ -24,13 +24,30 @@ substituir taulerOG newPos = result
                 result = if isJust trobat then fromJust trobat else pos
                 trobat = find (\x -> fst x == fst pos) posicionsNoves
 
+--Retorna un tauler amb les caselles fantasma del caracter especificat activades
+activarInterruptorsLletra :: Tauler -> Char -> Tauler
+activarInterruptorsLletra tauler c = do
+    let caracter = toLower c
+    let posicions = findIndices (\x -> snd x == caracter) (tau tauler)
+    Tauler (foldl (\t p -> (take p t) ++ [(fst(t !! p),'1')] ++ (drop (p+1) t)) (tau tauler) posicions) (tamany tauler)
 
+--Donades unes posicions trepitjades, activa les caselles dels interruptors trepitjats, si escau
+activarInterruptors :: Tauler -> [Posicio] -> Tauler
+activarInterruptors tauler posicions = do
+    let caselles = map (casella tauler) posicions
+    let caracters = filter (\x -> isUpper x && x /= 'G' && x /= 'S') caselles
+    foldl (\x y -> activarInterruptorsLletra x y) tauler caracters
+
+
+--retorna una fila específica del tauler en forma de string
 obtenirStringFila :: Tauler -> Int -> String
 obtenirStringFila t y = result
     where
         result = map (casella t) posicions
         posicions = [(Posicio x y) | x <- [0 .. (fst (tamany t) - 1)]]
 
+
+--mostra el tauler per pantalla
 mostrarTauler :: Tauler -> IO()
 mostrarTauler t = do
     let llistaStrings = map (obtenirStringFila t) [0 .. (snd (tamany t) - 1)];
@@ -45,7 +62,7 @@ casella t p
 
 --ens diu si la posicio que preguntem és buida.
 casellaBuida :: Tauler -> Posicio -> Bool
-casellaBuida t p = casella t p == '0'
+casellaBuida t p = casella t p == '0' || isLower (casella t p)
 
 --ens diu si la posicio que preguntem és el destí.
 casellaFi :: Tauler -> Posicio -> Bool

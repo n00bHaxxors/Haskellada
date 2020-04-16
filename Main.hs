@@ -23,7 +23,7 @@ jocInteractiu (p,i)
   | otherwise = do
       putStrLn (if i /= 0 then"\nPartida número " ++ show(i) ++"\n"else "")  
       mostrarPartida p
-      putStrLn "Introdueix una direcció [U,D,L,R]"
+      putStrLn "Introdueix una direcció \\e[31m[U,D,L,R]"
       entrada <- getLine
       let mov | entrada == "D" = D
               | entrada == "U" = U
